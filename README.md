@@ -44,9 +44,15 @@ Press [enter] to exit.
 ```
 Proje Yapısı
 Program.cs: Uygulamanın giriş noktası.
+
 IMessageQueueProvider.cs: Mesaj kuyruğu sağlayıcıları için arayüz.
+
 RabbitMQProvider.cs: RabbitMQ sağlayıcısı.
+
 KafkaProvider.cs: Kafka sağlayıcısı.
+
 docker-compose.yml: RabbitMQ ve Kafka servislerini başlatmak için Docker Compose dosyası.
+
 Katkıda Bulunma
+
 Katkıda bulunmak isterseniz, lütfen bir pull request gönderin veya bir issue açın.
