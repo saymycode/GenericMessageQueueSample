@@ -11,8 +11,7 @@ class Program
 
         IMessageQueueProvider kafkaProvider = new KafkaProvider();
         kafkaProvider.Publish("Hello from Kafka!");
-        kafkaProvider.Consume();
-       
+        kafkaProvider.Consume();       
         Console.WriteLine("Press [enter] to exit.");
         Console.ReadLine(); // Konsolun açık kalmasını sağlar
     }

@@ -4,5 +4,6 @@ namespace GenericMessageQueueSample.Interfaces
     {
         void Publish(string message);
         void Consume();
+        void Consume(CancellationToken cancellationToken);
     }
 }

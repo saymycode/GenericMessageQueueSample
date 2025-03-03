@@ -40,3 +40,4 @@ d:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.
 d:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\GenericMessageQueueSample.pdb
 D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\GenericMessageQueueSample.genruntimeconfig.cache
 D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\ref\GenericMessageQueueSample.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\GenericMessageQueueSample.sourcelink.json

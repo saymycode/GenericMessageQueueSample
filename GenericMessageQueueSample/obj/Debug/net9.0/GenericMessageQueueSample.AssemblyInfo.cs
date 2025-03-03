@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GenericMessageQueueSample")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f9ff2909cae4302f168437dd852b6085c7afbd2")]
 [assembly: System.Reflection.AssemblyProductAttribute("GenericMessageQueueSample")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GenericMessageQueueSample")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

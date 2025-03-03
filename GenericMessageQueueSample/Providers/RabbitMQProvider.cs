@@ -38,20 +38,20 @@ namespace GenericMessageQueueSample.Providers
             {
                 var body = ea.Body.ToArray();
                 var messageJson = Encoding.UTF8.GetString(body);
-
-                // Mesajı deserialize et
                 var payload = System.Text.Json.JsonSerializer.Deserialize<MessagePayload>(messageJson);
                 if (payload != null)
                 {
                     var receivedAt = DateTime.UtcNow;
                     var elapsedTime = receivedAt - payload.SentAt;
-
                     Console.WriteLine($"RabbitMQ: Received {payload.Message} at {receivedAt:O}");
                     Console.WriteLine($"Elapsed time: {elapsedTime.TotalMilliseconds} ms");
                 }
             };
             _channel.BasicConsume(queue: "rabbitmq-queue", autoAck: true, consumer: consumer);
+
+            // Thread'in kapanmamasını sağlamak için sonsuz döng
         }
+
 
         // Mesaj modelini tanımla
         public class MessagePayload
@@ -65,6 +65,11 @@ namespace GenericMessageQueueSample.Providers
         {
             _channel?.Close();
             _connection?.Close();
+        }
+
+        public void Consume(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
