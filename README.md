@@ -67,6 +67,30 @@ Elapsed time: 1000 ms
 Press [enter] to exit.
 ```
 
+## Performance Test Results
+
+Both RabbitMQ and Kafka received the same messages and were tested for message consumption time. Below are the results:
+
+### RabbitMQ Test Results:
+
+- RabbitMQ sent a message and consumed it after 135 ms.
+- RabbitMQ sent a message and consumed it after 157 ms.
+- RabbitMQ sent a message and consumed it after 136 ms.
+- RabbitMQ sent a message and consumed it after 123 ms.
+
+### Kafka Test Results:
+
+- Kafka sent a message and consumed it after 59067 ms.
+- Kafka sent a message and consumed it after 33181 ms.
+- Kafka sent a message and consumed it after 53112 ms.
+- Kafka sent a message and consumed it after 69685 ms.
+
+**Performance Conclusion:**  
+RabbitMQ performs better in terms of message consumption times compared to Kafka.
+
+**Performans Sonuçları:**  
+RabbitMQ, Kafka'ya kıyasla daha hızlı mesaj tüketimi sağlıyor.
+
 ## Project Structure
 
 - `Program.cs`: The entry point of the application.
@@ -88,5 +112,3 @@ Proje Yapısı
 If you'd like to contribute, please submit a pull request or open an issue.
 
 Katkıda bulunmak isterseniz, lütfen bir pull request gönderin veya bir issue açın.
-
----
