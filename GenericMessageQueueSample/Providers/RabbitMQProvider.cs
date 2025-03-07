@@ -2,116 +2,111 @@ using GenericMessageQueueSample.Interfaces;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using static GenericMessageQueueSample.Interfaces.IMessageQueueProvider;
 
 namespace GenericMessageQueueSample.Providers
 {
-    // RabbitMQProvider class implementing IMessageQueueProvider for interacting with RabbitMQ messaging
     public class RabbitMQProvider : IMessageQueueProvider
     {
-        private readonly IConnection _connection;  // RabbitMQ connection object
-        private readonly IModel _channel;  // RabbitMQ channel object
+        private readonly IConnection _connection;
+        private readonly IModel _channel;  
 
         public RabbitMQProvider()
         {
-            // Establish a connection to the RabbitMQ broker
-            var factory = new ConnectionFactory() { HostName = "localhost" };  // Create a factory for connection with the broker
-            _connection = factory.CreateConnection();  // Establish the connection
-            _channel = _connection.CreateModel();  // Create a channel for communication with RabbitMQ
+            var factory = new ConnectionFactory() { HostName = "localhost" };  
+            _connection = factory.CreateConnection();
+            _channel = _connection.CreateModel(); 
 
-            // Declare a queue (if it doesn't exist, it will be created)
             _channel.QueueDeclare(
                 queue: "rabbitmq-queue", 
-                durable: false,   // Messages will not survive a broker restart
-                exclusive: false, // Queue is accessible by multiple connections
-                autoDelete: false, // Queue won't be deleted when no consumers are connected
-                arguments: null    // No additional queue arguments
+                durable: false,  
+                exclusive: false,
+                autoDelete: false, 
+                arguments: null  
             );
         }
-
-        /// <summary>
-        /// Publishes a message to the RabbitMQ queue.
-        /// </summary>
-        /// <param name="message">The message to be published.</param>
-        public void Publish(string message)
+        public void Publish(string message, Priority priority, MicroserviceToBeDelivered microserviceToBeDelivered)
         {
-            // Create a payload with the current timestamp
             var payload = new
             {
                 Message = message,
-                SentAt = DateTime.UtcNow // Timestamp when the message was sent
+                SentAt = DateTime.UtcNow,
+                Priority = priority,
+                MicroserviceToBeDelivered = microserviceToBeDelivered,
             };
 
-            // Serialize the payload into JSON format
             var body = Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(payload));
 
-            // Publish the message to the RabbitMQ queue
             _channel.BasicPublish(
-                exchange: "", // Default exchange
-                routingKey: "rabbitmq-queue", // Queue name
+                exchange: "",
+                routingKey: "rabbitmq-queue", 
                 basicProperties: null, 
-                body: body // Message body
+                body: body 
             );
             
-            // Log the sent message and timestamp
             Console.WriteLine($"RabbitMQ: Sent {message} at {payload.SentAt:O}");
         }
 
-        /// <summary>
-        /// Consumes messages from the RabbitMQ queue asynchronously.
-        /// </summary>
         public void Consume()
         {
             var consumer = new EventingBasicConsumer(_channel);
             
-            // Event handler for message reception
             consumer.Received += (model, ea) =>
             {
-                var body = ea.Body.ToArray();  // Extract the message body from the event arguments
-                var messageJson = Encoding.UTF8.GetString(body);  // Convert the byte array into a string (JSON)
-                var payload = System.Text.Json.JsonSerializer.Deserialize<MessagePayload>(messageJson);  // Deserialize JSON into a MessagePayload object
+                var body = ea.Body.ToArray();  
+                var messageJson = Encoding.UTF8.GetString(body);  
+                var payload = System.Text.Json.JsonSerializer.Deserialize<MessagePayload>(messageJson);  
                 
                 if (payload != null)
                 {
-                    var receivedAt = DateTime.UtcNow;  // Timestamp when the message was received
-                    var elapsedTime = receivedAt - payload.SentAt;  // Calculate latency between sending and receiving
+                    var receivedAt = DateTime.UtcNow; 
+                    var elapsedTime = receivedAt - payload.SentAt;  
                     
-                    // Log the received message and elapsed time
                     Console.WriteLine($"RabbitMQ: Received {payload.Message} at {receivedAt:O}");
                     Console.WriteLine($"Elapsed time: {elapsedTime.TotalMilliseconds} ms");
+                    switch (payload.MicroserviceToBeDelivered)
+                    {
+                        case MicroserviceToBeDelivered.MicroserviceA:
+                            Console.WriteLine("GOTO: MicroserviceA");
+                            break;
+                        case MicroserviceToBeDelivered.MicroserviceB:
+                            Console.WriteLine("GOTO: MicroserviceB");
+                            break;
+                        case MicroserviceToBeDelivered.MicroserviceC:
+                            Console.WriteLine("GOTO: MicroserviceC");
+                            break;
+                        case MicroserviceToBeDelivered.MicroserviceD:
+                            Console.WriteLine("GOTO: MicroserviceD");
+                            break;
+                    }
                 }
             };
             
-            // Start consuming messages from the queue
             _channel.BasicConsume(
                 queue: "rabbitmq-queue", 
-                autoAck: true, // Automatically acknowledge message receipt
-                consumer: consumer // Attach the consumer to the queue
+                autoAck: true, 
+                consumer: consumer 
             );
         }
 
-        // Defines the message structure for serialization/deserialization
         public class MessagePayload
         {
-            public string Message { get; set; } = string.Empty;  // The message content
-            public DateTime SentAt { get; set; }  // Timestamp when the message was sent
+            public string Message { get; set; } = string.Empty; 
+            public DateTime SentAt { get; set; }
+            public Priority Priority { get; set; }  
+            public MicroserviceToBeDelivered MicroserviceToBeDelivered { get; set; }
+
+
         }
 
-        /// <summary>
-        /// Disposes of the RabbitMQ resources (channel and connection).
-        /// </summary>
         public void Dispose()
         {
-            _channel?.Close();  // Close the channel
-            _connection?.Close(); // Close the connection
+            _channel?.Close(); 
+            _connection?.Close(); 
         }
-
-        /// <summary>
-        /// Placeholder method for consuming with a cancellation token.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token for stopping the consume operation.</param>
         public void Consume(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException(); // Placeholder for future implementation
+            throw new NotImplementedException(); 
         }
     }
 }

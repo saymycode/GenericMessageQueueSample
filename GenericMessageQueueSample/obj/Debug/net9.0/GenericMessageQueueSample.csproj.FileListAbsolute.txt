@@ -41,3 +41,12 @@ d:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.
 D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\GenericMessageQueueSample.genruntimeconfig.cache
 D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\ref\GenericMessageQueueSample.dll
 D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\obj\Debug\net9.0\GenericMessageQueueSample.sourcelink.json
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.Configuration.FileExtensions.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.Configuration.Json.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.FileProviders.Physical.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.FileSystemGlobbing.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
+D:\Bitbucket\GenericMessageQueueSample\GenericMessageQueueSample\bin\Debug\net9.0\appsettings.json

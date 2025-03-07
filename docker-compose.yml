@@ -1,77 +1,59 @@
 version: '3.9'
-services:
 
-  # RabbitMQ Service
+services:
+  # 📌 RabbitMQ (Mesaj Kuyruğu)
   rabbitmq:
-    image: rabbitmq:3-management  # Official RabbitMQ image with management tools
-    container_name: rabbitmq  # Container name
-    restart: always  # Auto-restart if the container crashes
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    restart: always
     ports:
-      - "5672:5672"     # AMQP protocol standard port
-      - "15672:15672"   # Web UI management port
+      - "5672:5672"       # AMQP protokolü
+      - "15672:15672"     # Yönetim paneli
     networks:
       - message-queue-net
     environment:
-      RABBITMQ_DEFAULT_USER: user  # Default admin username
-      RABBITMQ_DEFAULT_PASS: password  # Default admin password
-      RABBITMQ_ERLANG_COOKIE: "secretcookie"  # Security identifier for clustering
-      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 0.6  # Limits memory usage to 60% of available RAM
-      RABBITMQ_DEFAULT_VHOST: "/"  # Default virtual host setting
-      RABBITMQ_LOGS: "/var/log/rabbitmq/rabbit.log"  # Log file location
-      RABBITMQ_PLUGINS_DIR: "/usr/lib/rabbitmq/plugins"  # Plugin directory
-      RABBITMQ_MNESIA_DIR: "/var/lib/rabbitmq/mnesia"  # Data storage directory
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_ERLANG_COOKIE: "rabbit_secret"
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK_RELATIVE: 0.5
+      RABBITMQ_DEFAULT_VHOST: "/"
 
-  # Zookeeper Service (Dependency for Kafka)
+  # 📌 Zookeeper (Kafka İçin Gerekli)
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest  # Confluent Zookeeper image
-    container_name: zookeeper  # Container name
-    restart: always  # Auto-restart if the container crashes
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181  # Zookeeper client connection port
-      ZOOKEEPER_TICK_TIME: 2000  # Synchronization tick time (ms)
-      ZOOKEEPER_INIT_LIMIT: 10  # Startup time limit (in ticks)
-      ZOOKEEPER_SYNC_LIMIT: 5  # Time limit for follower nodes to sync with the leader (in ticks)
-      ZOOKEEPER_MAX_CLIENT_CNXNS: 60  # Max connections per client
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
 
-  # Kafka Broker
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
-    restart: always
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"  # External Kafka access port
-      - "29092:29092"  # Internal Docker access port
+      - "29092:29092"
     environment:
-      KAFKA_BROKER_ID: 1  # Unique ID for the broker
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"  # Zookeeper connection address
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092  # Broker access addresses
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092  # Listener configuration
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT  # Security protocol mapping
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT  # Communication protocol between brokers
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1  # Replication factor for offset storage
-      KAFKA_NUM_PARTITIONS: 3  # Default number of partitions for new topics
-      KAFKA_LOG_RETENTION_HOURS: 72  # Message retention duration (hours)
-      KAFKA_LOG_SEGMENT_BYTES: 1073741824  # Max log segment size (1GB)
-      KAFKA_MESSAGE_MAX_BYTES: 5242880  # Max message size (5MB)
-      KAFKA_SOCKET_SEND_BUFFER_BYTES: 512000  # Send buffer size (500KB)
-      KAFKA_SOCKET_RECEIVE_BUFFER_BYTES: 512000  # Receive buffer size (500KB)
-      KAFKA_FETCH_MAX_BYTES: 104857600  # Max fetch size for consumers (100MB)
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3  # Default replication factor for new topics
-      KAFKA_MIN_INSYNC_REPLICAS: 2  # Minimum in-sync replicas required for writes
-      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer  # Kafka ACL authorization
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "false"  # Deny access if no ACL is found
-    
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_LOG_FLUSH_INTERVAL_MS: 1000
+      KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 1000
+      KAFKA_NUM_NETWORK_THREADS: 3
+      KAFKA_NUM_IO_THREADS: 8
+      KAFKA_SOCKET_SEND_BUFFER_BYTES: 102400
+      KAFKA_SOCKET_RECEIVE_BUFFER_BYTES: 102400
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
 networks:
   message-queue-net:
     driver: bridge
-
-# Zookeeper: Manages Kafka broker metadata and leader election.
-# Kafka Broker: A server instance responsible for storing and serving messages.
-# Kafka Offset: Tracks the position of messages consumed in a topic.
-# Kafka Topic Partition: A subset of a topic for scalability and parallelism.
-# Kafka Topic: A category where records are published and consumed.
-# Kafka ACL: Defines access control permissions for Kafka resources.
